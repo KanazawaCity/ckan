@@ -136,8 +136,10 @@
               {% else %}
                 {# Views not created #}
                 <div class="data-viewer-info">
-                  <p>{{ _("There are no views created for this resource yet.") }}</p>
-                  {% if h.check_access('resource_view_create', {'resource_id': resource.id}) %}
+                  <p>{{ _("There are no views created for this resource yet.") }}</p>                  
+                  {% set extra = pkg.extras[0] %}
+                  {% set result = "管理区分" in extra.values() if extra|length > 0 else False %}
+                  {% if h.check_access('package_update', {'id':pkg.id }) and not is_activity_archive and not result %}
                     <p class="text-muted">
                       <i class="fa fa-info-circle"></i>
                       {{ _("Not seeing the views you were expecting?")}}

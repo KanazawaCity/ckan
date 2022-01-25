@@ -63,7 +63,9 @@
         </a>
       </li>
       {% endif %}
-      {% if can_edit %}
+      {% set extra = pkg.extras[0] %}
+      {% set result = "管理区分" in extra.values() if extra|length > 0 else False %}
+      {% if can_edit and not result %}
       <li>
         <a href="{{ h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id) }}">
           <i class="fa fa-pencil-square-o"></i>

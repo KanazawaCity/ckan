@@ -15,7 +15,11 @@
 
 {% block content_primary_nav %}
     {{ h.build_nav_icon(pkg.type ~ '.edit', _('Edit metadata'), id=pkg.name, icon='pencil-square-o') }}
-    {{ h.build_nav_icon(pkg.type ~ '.resources', _('Resources'), id=pkg.name, icon='bars') }}
+    {% set extra = pkg.extras[0] %}
+    {% set result = "管理区分" in extra.values() if extra|length > 0 else False %}
+    {% if not result %}
+        {{ h.build_nav_icon(pkg.type ~ '.resources', _('Resources'), id=pkg.name, icon='bars') }}
+    {% endif %}
     {% if h.check_config_permission('allow_dataset_collaborators') and h.check_access('package_collaborator_create', {'id': pkg_dict.id}) %}
         {{ h.build_nav_icon(pkg.type ~ '.collaborators_read', _('Collaborators'), id=pkg.name, icon='users')}}
     {% endif %}

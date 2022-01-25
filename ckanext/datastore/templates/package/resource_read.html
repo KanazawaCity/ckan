@@ -2,8 +2,13 @@
 
 {% block resource_actions_inner %}
   {{ super() }}
-  {% if res.datastore_active %}
-    <li>{% snippet 'package/snippets/data_api_button.html', resource=res %}</li>
+  {% if res.datastore_active and not res.url_type == 'upload' %}
+  {#    <li>{% snippet 'package/snippets/data_api_button.html', resource=res %}</li> #}
+  <div class="btn-group">
+    <a href="https://catalog-data.city.kanazawa.ishikawa.jp/datastore/dump/{{ res.id }}?bom=true"  class="btn btn-primary resource-url-analytics" target="_blank" rel="noreferrer">
+        <i class="fa fa-arrow-circle-o-down"></i> {{ _('Download') }}
+    </a>
+  </div>
   {% endif %}
 {% endblock %}
 

@@ -59,7 +59,7 @@ this.ckan.module('recline_view', function (jQuery) {
       map_config = this.options.map_config;
 
       var query = new recline.Model.Query();
-      query.set({ size: reclineView.limit || 100 });
+      query.set({ size: reclineView.limit || 1000 });
       query.set({ from: reclineView.offset || 0 });
 
       var urlFilters = {};

@@ -53,8 +53,7 @@ def dump_schema():
         u'fields': [ignore_missing, list_of_strings_or_string],
         u'sort': [default(u'_id'), list_of_strings_or_string],
     }
-
-
+    
 def dump(resource_id):
     data, errors = dict_fns.validate(request.args.to_dict(), dump_schema())
     if errors:
@@ -63,6 +62,16 @@ def dump(resource_id):
                 u'{0}: {1}'.format(k, u' '.join(e)) for k, e in errors.items()
             )
         )
+
+    resource = get_action(u'resource_show')(None, {u'id': resource_id})
+    url_type = resource[u'url_type']
+    r_name = ''
+    if not url_type:
+        r_name = resource[u'name'].rstrip('.csv')
+    else:
+        url = resource[u'url']
+        url = url.split("/")
+        r_name = url[len(url) - 1]
 
     response = make_response()
     response.headers[u'content-type'] = u'application/octet-stream'
@@ -84,11 +93,11 @@ def dump(resource_id):
                     u'fields'
                 ]
             },
+            name=r_name,
         )
     except ObjectNotFound:
         abort(404, _(u'DataStore resource not found'))
     return response
-
 
 class DictionaryView(MethodView):
 
@@ -160,7 +169,7 @@ class DictionaryView(MethodView):
 
 
 def dump_to(
-    resource_id, output, fmt, offset, limit, options, sort, search_params
+    resource_id, output, fmt, offset, limit, options, sort, search_params, name
 ):
     if fmt == u'csv':
         writer_factory = csv_writer
@@ -177,7 +186,7 @@ def dump_to(
 
     def start_writer(fields):
         bom = options.get(u'bom', False)
-        return writer_factory(output, fields, resource_id, bom)
+        return writer_factory(output, fields, name, bom)
 
     def result_page(offs, lim):
         return get_action(u'datastore_search')(

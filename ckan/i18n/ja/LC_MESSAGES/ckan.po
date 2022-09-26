@@ -2,12 +2,12 @@
 # Copyright (C) 2020 ORGANIZATION
 # This file is distributed under the same license as the ckan project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
-# 
+#
 # Translators:
 # Adrià Mercader <adria.mercader@okfn.org>, 2020
 # 秋山 梓 <azusasansan@gmail.com>, 2020
 # Masaki Hidano <MasaGon@info-lounge.jp>, 2020
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -5068,3 +5068,13 @@ msgstr "パスワードは8文字以上でなければいけません。"
 #: ckan/views/util.py:26
 msgid "Redirecting to external site is not allowed."
 msgstr "外部サイトへのリダイレクトは許可されていません"
+
+#: ckan/templates/user/login.html:26
+msgid "What are Login?"
+msgstr "ログインについて"
+
+#: ckan/templates/user/login.html:31
+msgid ""
+"You can login with your account below.<br>- CKAN Account<br>- Kanazawa City Authentication Infrastructure Account<br>If you have a Kanazawa City Authentication Infrastructure account, please click the button below to login."
+msgstr ""
+"下記のアカウントでログインできます。<br>- CKANアカウント<br>- 金沢市認証基盤アカウント<br>金沢市認証基盤アカウントをお持ちの方は下記のボタンからログインを行ってください。"

@@ -182,10 +182,12 @@ def package_create(context, data_dict):
         raise ValidationError(errors)
 
     if user:
-
-        user_obj = model.User.by_name(six.ensure_text(user))
+        user_obj = model.User.by_name(user)
         if user_obj:
             data['creator_user_id'] = user_obj.id
+        if user_obj.is_sso:
+            data['owner_org'] = ''
+            data['private'] = True
 
     pkg = model_save.package_dict_save(data, context)
 
@@ -220,8 +222,8 @@ def package_create(context, data_dict):
             {'package': data})
 
     # Create activity
+    user_obj = model.User.by_name(user)
     if not pkg.private:
-        user_obj = model.User.by_name(user)
         if user_obj:
             user_id = user_obj.id
         else:
@@ -229,6 +231,17 @@ def package_create(context, data_dict):
 
         activity = pkg.activity_stream_item('new', user_id)
         session.add(activity)
+
+
+    group = data_dict['group']
+    if group and user_obj.is_sso:
+        member_dict = {
+            'id': group,
+            'object': pkg.id,
+            'object_type': 'package',
+            'capacity': 'member',
+        }
+        logic.get_action('member_create')(context, member_dict)
 
     if not context.get('defer_commit'):
         model.repo.commit()

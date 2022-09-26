@@ -276,6 +276,7 @@ class UserController(base.BaseController):
                    'model': model, 'session': model.Session,
                    'user': c.user, 'auth_user_obj': c.userobj
                    }
+
         if id is None:
             if c.userobj:
                 id = c.userobj.id

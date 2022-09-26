@@ -36,12 +36,13 @@ def package_update(context, data_dict):
                 )) or authz.has_user_permission_for_some_org(
                 user, 'create_dataset')
 
+    user_obj = model.User.get(user)
+
     if not check1:
         success = False
         if authz.check_config_permission('allow_dataset_collaborators'):
             # if org-level auth failed, check dataset-level auth
             # (ie if user is a collaborator)
-            user_obj = model.User.get(user)
             if user_obj:
                 success = authz.user_is_collaborator_on_dataset(
                     user_obj.id, package.id, ['admin', 'editor'])
@@ -55,6 +56,12 @@ def package_update(context, data_dict):
             return {'success': False,
                     'msg': _('User %s not authorized to edit these groups') %
                             (str(user))}
+
+        if user_obj:
+            if user_obj.is_sso and package.creator_user_id != user_obj.id:
+                return {'success': False,
+                        'msg': _('User %s not authorized to edit package') %
+                                (str(user))}
 
     return {'success': True}
 

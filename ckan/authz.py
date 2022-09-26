@@ -114,12 +114,12 @@ class AuthFunctions:
                 else:
                     # fallback to chaining off the builtin auth function
                     prev_func = self._functions[name]
-                
+
                 new_func = (functools.partial(func, prev_func))
                 # persisting attributes to the new partial function
                 for attribute, value in six.iteritems(func.__dict__):
                     setattr(new_func, attribute, value)
-                
+
                 fetched_auth_functions[name] = new_func
 
         # Use the updated ones in preference to the originals.
@@ -291,6 +291,7 @@ def has_user_permission_for_group_or_org(group_id, user_name, permission):
     sysadmin rights and permission cascading down a group hierarchy.
 
     '''
+
     if not group_id:
         return False
     group = model.Group.get(group_id)
@@ -324,6 +325,7 @@ def _has_user_permission_for_groups(user_id, permission, group_ids,
     group (ignoring permissions cascading in a group hierarchy).
     Can also be filtered by a particular capacity.
     '''
+
     if not group_ids:
         return False
     # get any roles the user has for the group

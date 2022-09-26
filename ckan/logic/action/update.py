@@ -314,6 +314,11 @@ def package_update(context, data_dict):
         {"metadata_modified": datetime.datetime.utcnow()})
     model.Session.refresh(pkg)
 
+    user_obj = model.User.by_name(six.ensure_text(user))
+    if user_obj and user_obj.is_sso:
+        data['owner_org'] = ''
+        data['private'] = True
+
     pkg = model_save.package_dict_save(data, context)
 
     context_org_update = context.copy()

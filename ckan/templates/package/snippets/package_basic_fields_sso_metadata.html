@@ -1,0 +1,21 @@
+{% import 'macros/form.html' as form %}
+{% set groups = h.groups_available(am_member=True) %}
+
+{% block package_metadata_fields %}
+
+<div class="form-group control-medium">
+  <label for="field-groups" class="control-label">{{ _('Group') }}</label>
+  <div class="controls">
+    <select id="field-groups" name="group" data-module="autocomplete">
+      {% for group in groups %}
+      {% set selected_group = (existing_group and existing_group == group.id) or (not existing_group and not data.id and group.id == groups[0].id) %}
+      <option value="{{ group.id }}" {% if selected_org %} selected="selected" {% endif %}>{{ group.display_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<input type="hidden" name="owner_org" value="" />
+<input type="hidden" name="private" value="True" />
+
+{% endblock %}

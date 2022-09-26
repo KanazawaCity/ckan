@@ -754,23 +754,23 @@ def datasets_with_no_organization_cannot_be_private(key, data, errors,
 
     check_passed = True
 
-    if not dataset_id and private and not owner_org:
-        # When creating a dataset, enforce it directly
-        check_passed = False
-    elif dataset_id and private and not owner_org:
-        # Check if the dataset actually has an owner_org, even if not provided
-        try:
-            dataset_dict = logic.get_action('package_show')({},
-                            {'id': dataset_id})
-            if not dataset_dict.get('owner_org'):
-                check_passed = False
+    # if not dataset_id and private and not owner_org:
+    #     # When creating a dataset, enforce it directly
+    #     check_passed = False
+    # elif dataset_id and private and not owner_org:
+    #     # Check if the dataset actually has an owner_org, even if not provided
+    #     try:
+    #         dataset_dict = logic.get_action('package_show')({},
+    #                         {'id': dataset_id})
+    #         if not dataset_dict.get('owner_org'):
+    #             check_passed = False
 
-        except logic.NotFound:
-            check_passed = False
+    #     except logic.NotFound:
+    #         check_passed = False
 
-    if not check_passed:
-        errors[key].append(
-                _("Datasets with no organization can't be private."))
+    # if not check_passed:
+    #     errors[key].append(
+    #             _("Datasets with no organization can't be private."))
 
 
 def list_of_strings(key, data, errors, context):

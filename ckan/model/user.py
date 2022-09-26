@@ -44,7 +44,9 @@ user_table = Table('user', meta.metadata,
         Column('sysadmin', types.Boolean, default=False),
         Column('state', types.UnicodeText, default=core.State.ACTIVE),
         Column('image_url', types.UnicodeText),
-        Column('plugin_extras', MutableDict.as_mutable(JSONB))
+        Column('plugin_extras', MutableDict.as_mutable(JSONB)),
+        Column('is_sso', types.Boolean, default=False),
+        Column('ap_user_id', types.BigInteger, default=None)
         )
 
 
@@ -57,6 +59,10 @@ class User(core.StatefulObjectMixin,
     @classmethod
     def by_email(cls, email):
         return meta.Session.query(cls).filter_by(email=email).all()
+
+    @classmethod
+    def by_ap_user_id(cls, ap_user_id):
+        return meta.Session.query(cls).filter_by(ap_user_id=ap_user_id).all()
 
     @classmethod
     def get(cls, user_reference):

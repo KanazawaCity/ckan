@@ -13,38 +13,30 @@
       {% block form %}
         {% snippet "user/snippets/login_form.html", action=g.login_handler, error_summary=error_summary %}
       {% endblock %}
+      <p class="action" style="border-top: 1px dotted #ddd; margin: 30px 0; padding: 40px 0 0; text-align: center;">
+        {% block login_button %}
+        <a class="btn btn-primary" href="{{ h.url_for('/oidc/login') }}" style="font-size: 15px; padding: 8px 18px;">金沢市認証基盤アカウントでログイン</a>
+        {% endblock %}
+      </p>
     </div>
   </section>
 {% endblock %}
 
 {% block secondary_content %}
-  {% if h.check_access('user_create') %}
-  {% block help_register %}
+  {% block help_login %}
   <section class="module module-narrow module-shallow">
-    {% block help_register_inner %}
-      <h2 class="module-heading">{{ _('Need an Account?') }}</h2>
-      <div class="module-content">
-        <p>{% trans %}Then sign right up, it only takes a minute.{% endtrans %}</p>
-        <p class="action">
-        {% block help_register_button %}
-          <a class="btn btn-default" href="{{ h.url_for('user.register') }}">{{ _('Create an Account') }}</a>
-        {% endblock %}
-        </p>
-      </div>
-    {% endblock %}
-  </section>
-  {% endblock %}
-  {% endif %}
-
-  {% block help_forgotten %}
-  <section class="module module-narrow module-shallow">
-    {% block help_forgotten_inner %}
-    <h2 class="module-heading">{{ _('Forgotten your password?') }}</h2>
+    {% block help_login_inner %}
+    <h2 class="module-heading">
+      <i class="fa fa-info-circle"></i>
+      ログインについて
+    </h2>
     <div class="module-content">
-      <p>{% trans %}No problem, use our password recovery form to reset it.{% endtrans %}</p>
+      <p>
+        下記のアカウントでログインできます。<br><br>- CKANアカウント<br>- 金沢市認証基盤アカウント<br><br>金沢市認証基盤アカウントをお持ちでない方は下記のボタンから作成を行ってください。
+      </p>
       <p class="action">
-        {% block help_forgotten_button %}
-        <a class="btn btn-default" href="{{ h.url_for('user.request_reset') }}">{{ _('Forgot your password?') }}</a>
+        {% block account_create_button %}
+        <a class="btn btn-success" href="{{ h.url_for('user.register') }}">アカウントを作成</a>
         {% endblock %}
       </p>
     </div>

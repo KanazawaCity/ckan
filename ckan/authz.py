@@ -442,6 +442,17 @@ def can_manage_collaborators(package_id, user_id):
         # User is an administrator of the organization the dataset belongs to
         return True
 
+    member = model.Session.query(model.Member).\
+        filter(model.Member.table_id == package_id).\
+        filter(model.Member.table_name == "package").\
+        filter(model.Member.state == "active").\
+        filter(model.Member.capacity == "member").first()
+    if member:
+        admins = get_group_or_org_admin_ids(member.group_id)
+        for admin in admins:
+            if admin == user_id:
+                return True
+
     # Check if user is a collaborator with admin role
     return user_is_collaborator_on_dataset(user_id, pkg.id, 'admin')
 

@@ -9,7 +9,7 @@
 {% block page_header %}{% endblock %}
 
 {% block page_primary_action %}
-  {% if h.check_access('group_create') %}
+  {% if h.check_access('group_create') and not c.userobj.is_sso %}
     {% link_for _('Add Group'), named_route=group_type+'.new', class_='btn btn-primary', icon='plus-square' %}
   {% endif %}
 {% endblock %}

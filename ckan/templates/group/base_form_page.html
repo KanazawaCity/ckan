@@ -2,7 +2,9 @@
 
 {% block breadcrumb_content %}
   <li>{{ h.nav_link(_('Groups'), named_route=group_type+'.index') }}</li>
-  <li class="active">{% block breadcrumb_link %}{{ h.nav_link(_('Add a Group'), named_route=group_type+'.new') }}{% endblock %}</li>
+  {% if not c.userobj.is_sso %}
+    <li class="active">{% block breadcrumb_link %}{{ h.nav_link(_('Add a Group'), named_route=group_type+'.new') }}{% endblock %}</li>
+  {% endif %}
 {% endblock %}
 
 {% block primary_content_inner %}

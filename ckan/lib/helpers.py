@@ -2946,10 +2946,34 @@ def get_collaborators(package_id):
 
     collaborators = []
 
+    # グループ管理者の場合、Collaboratorから削除できないようにする
+    member = model.Session.query(model.Member).\
+        filter(model.Member.table_id == package_id).\
+        filter(model.Member.table_name == "package").\
+        filter(model.Member.state == "active").\
+        filter(model.Member.capacity == "member").first()
+
+    admins = []
+    if member:
+        admins = authz.get_group_or_org_admin_ids(member.group_id)
+
     for collaborator in _collaborators:
+        user_id = collaborator['user_id']
+        can_edit_role = True
+
+        for admin in admins:
+            if admin == user_id:
+                can_edit_role = False
+
+                if c.userobj and c.userobj.id == admin:
+                    can_edit_role = True
+
+                break
+
         collaborators.append((
-            collaborator['user_id'],
-            collaborator['capacity']
+            user_id,
+            collaborator['capacity'],
+            can_edit_role
         ))
 
     return collaborators

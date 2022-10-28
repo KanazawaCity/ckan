@@ -13995,7 +13995,7 @@ a.tag:hover {
   margin-top: 0;
 }
 .ckanext-datapreview > iframe {
-  min-height: 650px;
+  min-height: 750px;
 }
 .ckanext-datapreview > img {
   max-height: 500px;

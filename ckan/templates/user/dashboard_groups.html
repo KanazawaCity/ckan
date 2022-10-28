@@ -3,7 +3,7 @@
 {% block dashboard_activity_stream_context %}{% endblock %}
 
 {% block page_primary_action %}
-  {% if h.check_access('group_create') %}
+  {% if h.check_access('group_create') and not c.userobj.is_sso %}
     {% link_for _('Add Group'), controller='group', action='new', class_="btn btn-primary", icon="plus-square" %}
   {% endif %}
 {% endblock %}

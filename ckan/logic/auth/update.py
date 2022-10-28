@@ -8,6 +8,8 @@ from ckan.common import _
 # FIXME this import is evil and should be refactored
 from ckan.logic.auth.create import _check_group_auth
 
+from logging import getLogger
+log = getLogger(__name__)
 
 @logic.auth_allow_anonymous_access
 def package_update(context, data_dict):
@@ -37,6 +39,8 @@ def package_update(context, data_dict):
                 user, 'create_dataset')
 
     user_obj = model.User.get(user)
+    log.info('check1')
+    log.info(check1)
 
     if not check1:
         success = False
@@ -48,20 +52,24 @@ def package_update(context, data_dict):
                     user_obj.id, package.id, ['admin', 'editor'])
         if not success:
             return {'success': False,
-                    'msg': _('User %s not authorized to edit package %s') %
-                            (str(user), package.id)}
+                    'msg': _('User %s not authorized to edit package %s') % (str(user), package.id)}
     else:
         check2 = _check_group_auth(context, data_dict)
         if not check2:
             return {'success': False,
-                    'msg': _('User %s not authorized to edit these groups') %
-                            (str(user))}
+                    'msg': _('User %s not authorized to edit these groups') % (str(user))}
 
-        if user_obj:
-            if user_obj.is_sso and package.creator_user_id != user_obj.id:
+        if user_obj and user_obj.is_sso:
+            if authz.check_config_permission('allow_dataset_collaborators'):
+                # if org-level auth failed, check dataset-level auth
+                # (ie if user is a collaborator)
+                check3 = authz.user_is_collaborator_on_dataset(user_obj.id, package.id, ['admin', 'editor'])
+                if check3:
+                    return {'success': True}
+
+            if package.creator_user_id != user_obj.id:
                 return {'success': False,
-                        'msg': _('User %s not authorized to edit package') %
-                                (str(user))}
+                        'msg': _('User %s not authorized to edit package %s') % (str(user), package.id)}
 
     return {'success': True}
 

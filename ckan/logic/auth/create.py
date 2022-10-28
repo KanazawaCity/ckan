@@ -115,6 +115,7 @@ def group_create(context, data_dict=None):
 
     if user and authz.check_config_permission('user_create_groups'):
         return {'success': True}
+
     return {'success': False,
             'msg': _('User %s not authorized to create groups') % user}
 

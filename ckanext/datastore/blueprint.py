@@ -53,7 +53,7 @@ def dump_schema():
         u'fields': [ignore_missing, list_of_strings_or_string],
         u'sort': [default(u'_id'), list_of_strings_or_string],
     }
-    
+
 def dump(resource_id):
     data, errors = dict_fns.validate(request.args.to_dict(), dump_schema())
     if errors:

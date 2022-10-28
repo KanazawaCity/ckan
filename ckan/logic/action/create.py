@@ -232,16 +232,34 @@ def package_create(context, data_dict):
         activity = pkg.activity_stream_item('new', user_id)
         session.add(activity)
 
+    # グループ
+    if user_obj.is_sso:
+        if 'group' in data_dict:
+            group = data_dict['group']
 
-    group = data_dict['group']
-    if group and user_obj.is_sso:
-        member_dict = {
-            'id': group,
-            'object': pkg.id,
-            'object_type': 'package',
-            'capacity': 'member',
-        }
-        logic.get_action('member_create')(context, member_dict)
+            if group and user_obj.is_sso:
+                member_dict = {
+                    'id': group,
+                    'object': pkg.id,
+                    'object_type': 'package',
+                    'capacity': 'member',
+                }
+                logic.get_action('member_create')(context, member_dict)
+
+                # add collaborator
+                admins = authz.get_group_or_org_admin_ids(group)
+                for admin in admins:
+                    collaborator_dict = {
+                        u'id': pkg.id,
+                        u'user_id': admin,
+                        u'capacity': u'editor'
+                    }
+                    logic.get_action(u'package_collaborator_create')(
+                        context, collaborator_dict)
+        else:
+            model.Session.rollback()
+            errors = {'group': ['グループが選択されていません。']}
+            raise ValidationError(errors)
 
     if not context.get('defer_commit'):
         model.repo.commit()

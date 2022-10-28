@@ -331,6 +331,7 @@ def _read(id, limit, group_type):
     }
 
     context_ = dict((k, v) for (k, v) in context.items() if k != u'schema')
+
     try:
         query = get_action(u'package_search')(context_, data_dict)
     except search.SearchError as se:
@@ -839,6 +840,8 @@ class CreateGroupView(MethodView):
 
         try:
             _check_access(u'group_create', context)
+            if g.userobj.is_sso:
+                raise NotAuthorized
         except NotAuthorized:
             base.abort(403, _(u'Unauthorized to create a group'))
 
@@ -1011,6 +1014,8 @@ class DeleteGroupView(MethodView):
         }
         try:
             _check_access(u'group_delete', context, {u'id': id})
+            if g.userobj.is_sso:
+                raise NotAuthorized
         except NotAuthorized:
             base.abort(403, _(u'Unauthorized to delete group %s') % u'')
         return context

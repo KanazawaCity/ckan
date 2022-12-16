@@ -15,7 +15,7 @@
       {% endblock %}
       <p class="action" style="border-top: 1px dotted #ddd; margin: 30px 0; padding: 40px 0 0; text-align: center;">
         {% block login_button %}
-        <a class="btn btn-primary" href="{{ h.url_for('/oidc/login') }}" style="font-size: 15px; padding: 8px 18px;">金沢市認証基盤アカウントでログイン</a>
+        <a class="btn btn-primary" href="{{ h.url_for('/oidc/login') }}" style="font-size: 15px; padding: 8px 18px;">市民や事業者等のログインはこちら</a>
         {% endblock %}
       </p>
     </div>
@@ -32,7 +32,7 @@
     </h2>
     <div class="module-content">
       <p>
-        下記のアカウントでログインできます。<br><br>- CKANアカウント<br>- 金沢市認証基盤アカウント<br><br>金沢市認証基盤アカウントをお持ちでない方は下記のボタンから作成を行ってください。
+        下記のアカウントでログインできます。<br><br>- CKANアカウント<br>- 市民等オープンデータアカウント<br><br>市民等オープンデータアカウントをお持ちでない方は下記のボタンから作成を行ってください。
       </p>
       <p class="action">
         {% block account_create_button %}

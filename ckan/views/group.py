@@ -298,21 +298,22 @@ def _read(id, limit, group_type):
     g.fields = extra_vars[u'fields']
     g.fields_grouped = extra_vars[u'fields_grouped']
 
+    if g.group_dict.get(u'is_organization'):
+        default_facet_titles = {
+            u'organization': _(u'Organizations')
+        }
+    else:
+        default_facet_titles = {
+            u'groups': _(u'Groups')
+        }
+
+    default_facet_titles[u'tags'] = _(u'Tags')
+    default_facet_titles[u'res_format'] =  _(u'Formats')
+    default_facet_titles[u'license_id'] =  _(u'Licenses')
+
     facets = OrderedDict()
-
-    default_facet_titles = {
-        u'organization': _(u'Organizations'),
-        u'groups': _(u'Groups'),
-        u'tags': _(u'Tags'),
-        u'res_format': _(u'Formats'),
-        u'license_id': _(u'Licenses')
-    }
-
-    for facet in h.facets():
-        if facet in default_facet_titles:
-            facets[facet] = default_facet_titles[facet]
-        else:
-            facets[facet] = facet
+    for facet in default_facet_titles:
+        facets[facet] = default_facet_titles[facet]
 
     # Facet titles
     facets = _update_facet_titles(facets, group_type)

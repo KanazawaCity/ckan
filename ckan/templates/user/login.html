@@ -10,14 +10,20 @@
   <section class="module">
     <div class="module-content">
       <h1 class="page-heading">{% block page_heading %}{{ _('Login') }}{% endblock %}</h1>
+      <div style="border-top: 1px dotted #ddd; border-bottom: 1px dotted #ddd; padding: 30px 0; margin: 20px 0 50px; " >
+        <p style="text-align: center; font-size: 18px">
+          オープンデータを登録する方は、こちら。<br>(アカウントをお持ちの方)<br>
+        </p>
+        {% block login_button %}
+        <p class="action" style="text-align: center; margin: 20px 0;">
+          <a class="btn btn-primary" href="{{ h.url_for('/oidc/login') }}" style="font-size: 15px; padding: 8px 18px;"> オープンデータを登録</a>
+        </p>
+        {% endblock %}
+     </div>
+
       {% block form %}
         {% snippet "user/snippets/login_form.html", action=g.login_handler, error_summary=error_summary %}
       {% endblock %}
-      <p class="action" style="border-top: 1px dotted #ddd; margin: 30px 0; padding: 40px 0 0; text-align: center;">
-        {% block login_button %}
-        <a class="btn btn-primary" href="{{ h.url_for('/oidc/login') }}" style="font-size: 15px; padding: 8px 18px;">市民や事業者等のログインはこちら</a>
-        {% endblock %}
-      </p>
     </div>
   </section>
 {% endblock %}
@@ -32,11 +38,11 @@
     </h2>
     <div class="module-content">
       <p>
-        下記のアカウントでログインできます。<br><br>- CKANアカウント<br>- 市民等オープンデータアカウント<br><br>市民等オープンデータアカウントをお持ちでない方は下記のボタンから作成を行ってください。
+         アカウントをお持ちでない方、 <br>アカウント情報を修正したい方は、こちら。
       </p>
       <p class="action">
         {% block account_create_button %}
-        <a class="btn btn-success" href="{{ h.url_for('user.register') }}">アカウントを作成</a>
+        <a class="btn btn-success" href="{{ h.url_for('user.register') }}">アカウントを作成・修正</a>
         {% endblock %}
       </p>
     </div>

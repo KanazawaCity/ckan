@@ -21,11 +21,13 @@ Example:
 
   {{ form.input('password', label=_("Password"), id='field-password', type="password", value="", error=password_error, classes=["control-medium"]) }}
 
-  {{ form.checkbox('remember', label=_("Remember me"), id='field-remember', checked=true, value="63072000") }}
+  <div class="form-actions" style="text-align: left;">
+    <div style="width: 79%; text-align: left; display: inline-block;">
+      {{ form.checkbox('remember', label=_("Remember me"), id='field-remember', checked=true, value="63072000") }}
+    </div>
 
-  <div class="form-actions">
     {% block login_button %}
-    <button class="btn btn-primary" type="submit">{{ _('Login') }}</button>
+    <button class="btn btn-primary" type="submit" style="padding: 8px 16px;">自治体職員ログイン</button>
     {% endblock %}
   </div>
 </form>

@@ -60,14 +60,19 @@ _PG_ERR_CODE = {
     'duplicate_alias': '42712',
 }
 
-_DATE_FORMATS = ['%Y-%m-%d',
-                 '%Y-%m-%d %H:%M:%S',
-                 '%Y-%m-%dT%H:%M:%S',
-                 '%Y-%m-%dT%H:%M:%SZ',
-                 '%d/%m/%Y',
-                 '%m/%d/%Y',
-                 '%d-%m-%Y',
-                 '%m-%d-%Y']
+_DATE_FORMATS = [
+    '%Y-%m-%d',
+    '%d/%m/%Y',
+    '%m/%d/%Y',
+    '%d-%m-%Y',
+    '%m-%d-%Y'
+]
+
+_TIMESTAMP_FORMATS = [
+    '%Y-%m-%d %H:%M:%S',
+    '%Y-%m-%dT%H:%M:%S',
+    '%Y-%m-%dT%H:%M:%SZ',
+]
 
 _INSERT = 'insert'
 _UPSERT = 'upsert'
@@ -228,12 +233,20 @@ def _guess_type(field):
         return 'numeric'
 
     # try iso dates
-    for format in _DATE_FORMATS:
+    for format in _TIMESTAMP_FORMATS:
         try:
             datetime.datetime.strptime(field, format)
             return 'timestamp'
         except (ValueError, TypeError):
             continue
+
+    for format in _DATE_FORMATS:
+        try:
+            datetime.datetime.strptime(field, format)
+            return 'date'
+        except (ValueError, TypeError):
+            continue
+
     return 'text'
 
 
@@ -878,12 +891,20 @@ def create_table(context, data_dict):
 
     # if type is field is not given try and guess or throw an error
     for field in supplied_fields:
+        type = field.get('type')
+        id = field.get('id')
+        value = records[0][id]
+
+        if type == 'timestamp' and id.find('時') == -1 and value.endswith('T00:00:00'):
+            field['type'] = 'date'
+            continue
+
         if 'type' not in field:
-            if not records or field['id'] not in records[0]:
+            if not records or id not in records[0]:
                 raise ValidationError({
-                    'fields': [u'"{0}" type not guessable'.format(field['id'])]
+                    'fields': [u'"{0}" type not guessable'.format(id)]
                 })
-            field['type'] = _guess_type(records[0][field['id']])
+            field['type'] = _guess_type(value)
 
     # Check for duplicate fields
     unique_fields = {f['id'] for f in supplied_fields}
@@ -957,22 +978,29 @@ def alter_table(context, data_dict):
     for num, field in enumerate(supplied_fields):
         # check to see if field definition is the same or and
         # extension of current fields
+        id = field.get('id')
+
         if num < len(current_fields):
-            if field['id'] != current_fields[num]['id']:
+            if id != current_fields[num]['id']:
                 raise ValidationError({
                     'fields': [(u'Supplied field "{0}" not '
-                                u'present or in wrong order').format(
-                        field['id'])]
+                                u'present or in wrong order').format(id)]
                 })
             # no need to check type as field already defined.
             continue
 
+        type = field.get('type')
+        value = records[0][id]
+
+        if type == 'timestamp' and id.find('時') == -1 and value.endswith('T00:00:00'):
+            field['type'] = 'date'
+
         if 'type' not in field:
-            if not records or field['id'] not in records[0]:
+            if not records or id not in records[0]:
                 raise ValidationError({
-                    'fields': [u'"{0}" type not guessable'.format(field['id'])]
+                    'fields': [u'"{0}" type not guessable'.format(id)]
                 })
-            field['type'] = _guess_type(records[0][field['id']])
+            field['type'] = _guess_type(value)
         new_fields.append(field)
 
     if records:
@@ -1822,6 +1850,8 @@ class DatastorePostgresqlBackend(DatastoreBackend):
             typ = fields_types.get(field_id)
             if typ == u'nested':
                 fmt = u'({0}).json'
+            elif typ == u'date':
+                fmt = u"to_char({0}, 'YYYY-MM-DD')"
             elif typ == u'timestamp':
                 fmt = u"to_char({0}, 'YYYY-MM-DD\"T\"HH24:MI:SS')"
                 if records_format == u'lists':

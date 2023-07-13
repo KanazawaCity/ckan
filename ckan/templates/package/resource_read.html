@@ -1,6 +1,8 @@
 {% extends "package/base.html" %}
 
 {% set res = resource %}
+{% set extra = pkg.extras[0] %}
+{% set result = "管理区分" in extra.values() if extra|length > 0 else False %}
 
 {% block head_extras -%}
   {{ super() }}
@@ -27,7 +29,7 @@
           {% block resource_actions %}
           <ul>
             {% block resource_actions_inner %}
-            {% if h.check_access('package_update', {'id':pkg.id }) and not is_activity_archive %}
+            {% if h.check_access('package_update', {'id':pkg.id }) and not is_activity_archive and not result %}
               <li>{% link_for _('Manage'), named_route=pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id, class_='btn btn-default', icon='wrench' %}</li>
             {% endif %}
             {% if res.url and h.is_url(res.url) %}
@@ -136,7 +138,7 @@
               {% else %}
                 {# Views not created #}
                 <div class="data-viewer-info">
-                  <p>{{ _("There are no views created for this resource yet.") }}</p>                  
+                  <p>{{ _("There are no views created for this resource yet.") }}</p>
                   {% set extra = pkg.extras[0] %}
                   {% set result = "管理区分" in extra.values() if extra|length > 0 else False %}
                   {% if h.check_access('package_update', {'id':pkg.id }) and not is_activity_archive and not result %}
